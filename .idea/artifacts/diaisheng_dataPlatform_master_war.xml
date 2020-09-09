@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="diaisheng-dataPlatform-master:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>diaisheng-dataPlatform-master</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="diaisheng-dataPlatform-master.war">
+      <element id="artifact" artifact-name="diaisheng-dataPlatform-master:war exploded" />
+    </root>
+  </artifact>
+</component>
