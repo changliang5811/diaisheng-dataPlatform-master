@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdu.diaisheng.dao.DataVauleDao">
+    <insert id="insertDataVaule" keyProperty="dataValueId" keyColumn="data_value_id">
+        insert into data_value(data_value_id,data_point_id,val,create_time)
+        values
+        (#{dataValueId},#{dataPoint.dataPointId},#{value},date_format(#{createTime},'%Y-%m-%d %H:%i:%S'))
+    </insert>
+    <resultMap id="dataValueMap" type="com.qdu.diaisheng.entity.DataValue">
+        <id column="data_value_id" property="dataValueId"/>
+        <result column="val" property="value"/>
+        <result column="create_time" property="createTime"/>
+        <association property="dataPoint" column="data_point_id" select="findById">
+        </association>
+    </resultMap>
+    <resultMap id="dataPointMap" type="com.qdu.diaisheng.entity.DataPoint">
+        <id column="data_point_id" property="dataPointId"/>
+        <result column="data_point_name" property="dataPointName"/>
+        <association property="dataModel" column="data_model_id"
+                     javaType="com.qdu.diaisheng.entity.DataModel">
+            <id column="data_model_id" property="dataModelId"/>
+            <result column="data_model_name" property="dataModelName"/>
+        </association>
+    </resultMap>
+    <!-- 根据dataPoint查询最新的数据   -->
+    <!--mysql中建立了（data_point_id,create_time）的复合索引-->
+    <select id="getnowdate" resultMap="dataValueMap" >
+
+        <foreach collection="dataPointIds" item="dataPointId"  separator="union all" close="">
+            ( select data_value_id,val,data_point_id,create_time from data_value where data_point_id=#{dataPointId} order by create_time desc limit 1)
+        </foreach>
+
+    </select>
+    <select id="findById" parameterType="String" resultMap="dataPointMap">
+        select data_point_id,data_point_name,p.data_model_id as data_model_id,data_model_name
+        from data_point p,data_model m
+        where data_point_id=#{dataPointId} and p.data_model_id=m.data_model_id
+    </select>
+
+    <select id="getDataByPointId" parameterType="String" resultMap="dataValueMap">
+       select*from data_value where data_point_id=#{dataPointId} order by create_time desc limit 1
+    </select>
+
+
+    <select id="queryByDate" parameterType="String" resultMap="dataValueMap">
+        select*from data_value where create_time=#{date}
+    </select>
+
+
+    <select id="queryLastData" parameterType="String" resultMap="dataValueMap">
+        select*from data_value where data_value_id=(select last_insert_id())
+        and data_point_id=#{dataPointId};
+    </select>
+
+
+
+
+
+    <select id="queryBetweenDateAndPonitId" resultMap="dataValueMap">
+        select*from data_value where data_point_id=#{dataPointId} and create_time between DATE_FORMAT(#{date1}, '%Y-%m-%d %H:%i:%S') and DATE_FORMAT(#{date2}, '%Y-%m-%d %H:%i:%S')
+    </select>
+
+
+   <select id="queryBetweenDateAtPointIds" resultMap="dataValueMap">
+       select*from data_value where data_point_id in
+       <foreach collection="dataPointIds" item="dataPointId" open="("  separator="," close=")">
+         #{dataPointId}
+       </foreach>
+       and
+       create_time between DATE_FORMAT(#{date1}, '%Y-%m-%d %H:%i:%S') and DATE_FORMAT(#{date2}, '%Y-%m-%d %H:%i:%S')
+   </select>
+
+
+</mapper>

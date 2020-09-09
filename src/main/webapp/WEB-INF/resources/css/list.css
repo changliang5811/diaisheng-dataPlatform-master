@@ -1,0 +1,80 @@
+/*    .right_content{
+		font-size: 18px;
+		padding: 12px 15px;
+		color: #252525;
+		position: relative;
+		transition: all 0.4s ease-in-out;
+		display: inline-block;
+		vertical-align: middle;
+		margin-left: 330px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+		}*/
+.ex{
+    position: relative;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+.box{
+    position: relative;margin-top: 0px;margin-left: 0px;margin-right: 0px; border:solid 1px;
+}
+.down-content{
+    display: none;
+}
+.down:hover .down-content{
+    position: fixed;
+    display: list-item;
+
+
+}
+.down{
+    background:  #4a9af2;
+    border-radius: 5px;
+    color:white;
+    font-size: 12px;
+    border-width: 0px;
+    height: 25px;
+    width: 80px;
+}
+.history{
+
+    background:  #4a9af2;
+    border-radius: 5px;
+    color:white;
+    font-size: 12px;
+    border-width: 0px;
+    height: 25px;
+    width: 80px;
+}
+.more{
+    /*    position:relative;
+        margin-top: 50%;
+        margin-bottom: 50%;
+        margin-right: 10px;*/
+    display: inline-block;
+}
+.more-button{
+    background:  #4a9af2;
+    border-radius: 5px;
+    color:white;
+    font-size: 12px;
+    border-width: 0px;
+    height: 25px;
+    width: 80px;
+}
+.more-items{
+
+    background: wheat;
+
+    font-size: 12px;
+    border-width: 0px;
+    height: 25px;
+    width: 80px;
+}
+.span1{
+    margin-top: 20px;
+}
+#caozuo button{
+    width: 70px;
+    padding:0 0 0 0;
+}

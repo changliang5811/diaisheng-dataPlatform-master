@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <title>迪爱生数据平台v1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="../resources/js/jquery-1.9.0.min.js"></script>
+</head>
+
+<body>
+
+<button id="test" value="submit" style="width: auto">submit</button>
+  <script type="text/javascript">
+      $("#test").click(function(){
+          var faultList=[];
+          var testData={"dataPointIds": ['41607','32269'], "startDate": "2019-04-30 00:01:00","endDate":"2019-05-01 02:14:0"};
+          faultList.push(testData);
+          $.ajax({
+              type:"POST",
+              url: "/diaisheng/valueadmin/getdatabetweendate",
+              dataType:"json",
+              contentType:"application/x-www-form-urlencoded", // 指定这个协议很重要
+              data:faultList, //只有这一个参数，json格式，后台解析为实体，后台可以直接用
+              success:function(data){
+              },
+              error:function(err){
+                  console.log(err);
+              }
+          });
+      })
+  </script>
+</body>
+</html>

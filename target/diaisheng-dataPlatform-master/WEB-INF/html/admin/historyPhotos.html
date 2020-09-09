@@ -1,0 +1,279 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>历史图片数据</title>
+    <link href="../resources/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link href="../resources/layui/css/layui.mobile.css" rel="stylesheet">
+    <script src="../resources/js/laydate/laydate.js" charset="utf-8"></script>
+    <script src="../resources/layui/layui.all.js" charset="utf-8"></script>
+    <script src="../resources/js/lib/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .block {
+            width: 700px;
+            height: 400px;
+            border: 1px solid black;
+            margin: 0px 0px 0px 13%;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .box_big {
+            position: absolute;
+            width: 1000%;
+            height: 400px;
+
+        }
+
+        .nav {
+            transition: margin-left 0.5s linear;
+        }
+
+        .box {
+            width: 700px;
+            height: 400px;
+            float: left;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .spot {
+            position: absolute;
+            width: 100%;
+            text-align: right;
+            bottom: 5px;
+        }
+
+        .spot_list {
+
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            text-align: center;
+            border: 1px solid gray;
+            border-radius: 5px;
+            line-height: 30px;
+            font-weight: bolder;
+            margin: 10px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn1 {
+            width: 100%;
+            height: 80px;
+            position: absolute;
+            margin: 0 auto;
+            top: 160px;
+        }
+
+        .left_btn, .right_btn {
+            width: 30px;
+            height: 80px;
+            z-index: 15;
+            background: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            line-height: 80px;
+            border-radius: 8px;
+
+        }
+
+        .left_btn {
+            float: left;
+        }
+
+        .right_btn {
+            float: right;
+        }
+        .spanCursor:hover {
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+<form class="layui-form">
+    <br>
+    <div class="layui-form-item" style="margin-left:12%">
+        <div class="layui-inline">
+            <label for="start_time" class="layui-form-label" style="width: 100px">起始时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" autocomplete="off" id="start_time" name="start_time" placeholder="yyyy-MM-dd HH:mm:ss">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label for="end_time" class="layui-form-label" style="width: 100px">结束时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" autocomplete="off" id="end_time" name="end_time" placeholder="yyyy-MM-dd HH:mm:ss">
+            </div>
+        </div>
+        <button type="button" class="btn btn-success" onclick="query()" style="height:35px; width: 80px;margin-left:30px">查  询</button>
+    </div>
+    <div id="main">
+        <div class="block" hidden="hidden">
+            <div class="box_big">
+            </div>
+            <div class="spot" id="spotPhoto" hidden="hidden">
+            </div>
+            <div class="btn1">
+                <div class="left_btn spanCursor"><span> < </span></div>
+                <div class="right_btn spanCursor"><span> > </span></div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    var theRequest = new Object();
+    $(document).ready(function() {
+        laydate.render({
+            elem: '#start_time'
+            ,type: 'datetime'
+        });
+        laydate.render({
+            elem: '#end_time'
+            ,type: 'datetime'
+        });
+        var time = null;
+        var urlData = decodeURI(location.search); //获取url中"?"符后的字串
+        if (urlData.indexOf("?") != -1) {
+            var str = urlData.substr(1);
+            strs = str.split("&");
+            for(var i = 0; i < strs.length; i ++) {
+                theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+            }
+        }
+    })
+
+   function query(){
+        var stime = $("#start_time").val();
+        var etime = $("#end_time").val();
+       $(".box_big").empty();
+       $("#spotPhoto").empty();
+        alert("正在加载，请稍后。。。");
+
+        $.ajax({
+            url: "/diaisheng/photos/selectHistoryPhotos",
+            type: "get",
+            data:{"stime":stime,"etime":etime,"deviceId":theRequest.deviceId},
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    alert(data.msg);
+                    $(".block").removeAttr("hidden");
+                    var length = 1;
+                    if (data.object.length==0){
+                        $(".box_big").empty();
+                    }else {
+                        $.each(data.object, function(key,value){
+                            $(".box_big").append('<div class="box"><img src="data:image/jpg;base64,'+value.content+'" alt=""/></div>');
+                            $("#spotPhoto").append('<div class="spot_list">'+(key+1)+'</div>');
+                            length++;
+                        });
+                        $(".box_big").css("width",length*100+"%");
+                        photoScroll();
+                    }
+                } else {
+                    alert(data.errorMsg);
+                }
+            },
+            error: function (data) {
+                $("#photoData").html("")
+                alert("查询失败，数据库异常");
+            }
+        });
+    }
+   function photoScroll(){
+       //首先获取元素，这里获取了所有需要的元素。
+       var box = document.getElementsByClassName("box_big")[0];
+       console.log("box"+box);
+       var spot = document.getElementsByClassName("spot_list");
+       console.log("spot"+spot.length);
+       var block = document.getElementsByClassName("block")[0];
+       console.log("block"+block);
+       var left_btn = document.getElementsByClassName("left_btn")[0];
+       var right_btn = document.getElementsByClassName("right_btn")[0];
+
+       spot[0].style.background = "rgba(91,91,91,0.8)";
+       var count = 0;
+       showtime();
+       //鼠标进入计时器停止
+       block.onmouseenter = function () {
+           clearInterval(time);
+       };
+       //鼠标出来计时器打开
+       block.onmouseleave = function () {
+           showtime();
+       };
+       //点的事件
+       for (var i = 0; i < spot.length; i++) {
+           spot[i].index = i;
+           spot[i].onmouseenter = function () {
+               spot[count].style.background = "rgba(255, 255, 255, 0.3)";
+               this.style.background = "rgba(91,91,91,0.8)";
+               count = this.index;
+               box.style.marginLeft = (count * -700) + "px";
+           }
+
+       }
+       //图片左边划
+       left_btn.onclick = function () {
+           spot[count].style.backgroundColor = "rgba(255,255,255,0.3)";
+           count--;
+           if (count < 0) {
+               box.className = "box_big";
+               count = box.children.length - 1;
+               box.style.marginLeft = "-3500px";
+           }
+           setTimeout(function () {
+               box.className = "box_big nav";
+               box.style.marginLeft = (-700 * count) + "px";
+               spot[count].style.backgroundColor = "rgba(91,91,91,0.8)";
+           }, 1);
+       };
+       //图片右边划
+       right_btn.onclick = function () {
+           mate();
+       };
+       //正常滚动
+       function mate() {
+           box.className = "box_big nav";
+           spot[count].style.background = "rgba(255, 255, 255, 0.3)";
+           count++;
+           spot[count > box.children.length - 1 ? 0 : count].style.background = "rgba(91,91,91,0.8)";
+           box.style.marginLeft = (count * -700) + "px";
+           setTimeout(function () {
+               //判断count的值。如果大于图片长度，就重0开始+
+               if (count > box.children.length - 1) {
+                   count = 0;
+                   box.className = "box_big";
+                   box.style.marginLeft = "0px"
+               }
+           }, 1500)
+
+   }
+    //计时器
+    function showtime() {
+        time = setInterval(function () {
+            mate();
+        }, 1500);
+    }
+
+    }
+</script>
+</body>
+
+</body>
+
+</html>

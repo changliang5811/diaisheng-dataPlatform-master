@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdu.diaisheng.dao.UserDao">
+    <select id="findByUserNameAndPassword" resultType="com.qdu.diaisheng.entity.User">
+        select *from user where user_name=#{userName} and pass_word=#{password}
+    </select>
+    <select id="findByUserName" resultType="com.qdu.diaisheng.entity.User">
+        select *from user where user_name=#{userName}
+    </select>
+    <insert id="addUser" parameterType="com.qdu.diaisheng.entity.User" keyProperty="userId" keyColumn="user_id">
+        insert  into user(user_name,pass_word,phone_number)
+        values(#{userName},#{password},#{phoneNum})
+    </insert>
+</mapper>

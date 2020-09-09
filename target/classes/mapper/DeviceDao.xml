@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdu.diaisheng.dao.DeviceDao">
+    <insert id="insertDevice" parameterType="com.qdu.diaisheng.entity.Device" keyProperty="deviceId" keyColumn="device_id">
+        insert into device(device_id,device_name,user_id,create_time)
+        values (#{deviceId},#{deviceName},#{userId},#{createTime})
+    </insert>
+    <!-- 根据userid查询设备   -->
+    <select id="queryDevice" resultType="com.qdu.diaisheng.entity.Device">
+          select*from device where device_id in(select device_id from user where user_id=#{userId})
+    </select>
+
+    <select id="getAllDevice" resultType="com.qdu.diaisheng.entity.Device">
+        select*from device;
+    </select>
+
+     <!-- 根据userName查询设备   -->
+    <select id="getDeviceByName" resultType="com.qdu.diaisheng.entity.Device">
+          select*from device where device_id in(select device_id from user where user_name=#{userName})
+    </select>
+</mapper>

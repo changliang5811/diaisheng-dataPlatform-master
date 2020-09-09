@@ -1,0 +1,171 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+		#allmap{height:700px;width:1300px;margin-left: 20px;margin-top: 10px}
+		#r-result{width:100%; font-size:14px;}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=50CuVfqAiqvhphxCRQ9XLG5GPKXlIg9t"></script>
+	<script type="text/javascript" src="../resources/js/jquery-1.9.0.min.js"></script>
+	<title>设备定位</title>
+	<link rel="stylesheet" type="text/css" href="../resources/css/index/animate.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/index/cbootstrap-select.min.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/index/cawesome-bootstrap-checkbox.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/index/select2.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/index/style.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/index/theme.css">
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+
+	<link href="../resources/css/lib/font-awesome.min.css" rel="stylesheet">
+	<link href="../resources/css/lib/themify-icons.css" rel="stylesheet">
+	<link href="../resources/css/lib/data-table/buttons.bootstrap.min.css" rel="stylesheet" />
+	<link href="../resources/css/lib/menubar/sidebar.css" rel="stylesheet">
+	<link href="../resources/css/lib/bootstrap.min.css" rel="stylesheet">
+	<link href="../resources/css/lib/helper.css" rel="stylesheet">
+	<link href="../resources/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+
+
+	<div class="sidebar">
+			<div class="menu-control toggle-sidebar">
+			<a class="navbar-brand" href="#"><i class="fa fa-bar-chart"></i> 污水智能处理系统</a>
+	<i class="fa fa-bars navicon"></i>
+			</div>
+		<ul class="menu">
+			<li class="submenu">
+				<a href="/diaisheng/data/default" class="active">
+					<div>
+						<i class="menu-icon fa fa-th-large"></i>
+						<span class="menu-title">主页</span>
+					</div>
+				</a>
+			</li>
+			<li class="submenu">
+				<a href="/diaisheng/data/list">
+					<div>
+						<i class="menu-icon fa fa-desktop"></i>
+						<span class="menu-title">实时记录</span>
+					</div>
+				</a>
+			</li>
+			<li class="submenu">
+				<a href="/diaisheng/data/dataexport">
+					<div>
+						<i class="menu-icon fa fa-table"></i>
+						<span class="menu-title">历史记录</span>
+					</div>
+				</a>
+			</li>
+			<li class="submenu">
+				<a href="/diaisheng/device/location">
+					<div>
+						<i class="menu-icon fa fa-map-marker"></i>
+						<span class="menu-title">设备位置</span>
+					</div>
+				</a>
+			</li>
+
+			<li class="submenu">
+				<a href="/diaisheng/data/photo" >
+
+					<div>
+						<i class="menu-icon fa fa-camera-retro"></i>
+						<span class="menu-title">实时摄像</span>
+					</div>
+				</a>
+
+			</li>
+			<!--<li class="submenu">
+				<a href="/diaisheng/model/list" class="dropdown-toggle">
+
+					<div>
+						<i class="menu-icon fa fa-magic"></i>
+						<span class="menu-title">数据管理</span>
+					</div>
+				</a>
+
+			</li>
+
+			<li class="submenu">
+				<a href="/diaisheng/device/list" class="dropdown-toggle">
+
+					<div>
+						<i class="menu-icon fa fa-slack"></i>
+						<span class="menu-title">设备管理</span>
+					</div>
+				</a>
+
+			</li>-->
+
+			<li class="submenu">
+				<a href="/diaisheng/varify/exit">
+
+					<div>
+						<i class="menu-icon fa fa-power-off"></i>
+						<span class="menu-title">退出系统</span>
+					</div>
+				</a>
+
+			</li>
+
+		</ul>
+			</div>
+
+
+
+
+			<div id="allmap"></div>
+			<div id="r-result">
+			</div>
+			</body>
+			</html>
+			<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+	map.centerAndZoom(new BMap.Point(116.331398,39.897445),17);
+	map.enableScrollWheelZoom(true);
+	var lat;
+	var lon;
+	 $.ajax({
+	                        url:"/diaisheng/deviceadmin/getlocation",
+	                        type:"get",
+	                        dataType:"json",
+	                        success:function(data){
+	                           if(data.success){
+								   lat=data.lat;
+								   lon=data.lon;
+								   map.clearOverlays();
+								   var new_point = new BMap.Point(lon,lat);
+								   var marker = new BMap.Marker(new_point);  // 创建标注
+								   map.addOverlay(marker);              // 将标注添加到地图中
+								   map.panTo(new_point);
+                                   var opts={
+                                       width:200,
+                                       height:100,
+                                       titile:'设备地址',
+                                       enableMessage:true
+                                   }
+								   var geoc = new BMap.Geocoder();
+								   geoc.getLocation(new_point, function(rs){
+									   var addComp = rs.addressComponents;
+									   var result = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber+'迪爱生精细化工厂';
+									   var infoWindow=new BMap.InfoWindow("详细地址："+result,opts);
+									   map.openInfoWindow(infoWindow,new_point); //开启信息窗口
+								   });
+
+							   }
+							   else{
+								   alert("查询位置出错");
+							   }
+	                        },
+	                        error: function (errorMsg) {
+	                           alert("查询位置出错");
+	                           alert(errorMsg);
+	                        }
+	                    })
+	
+</script>

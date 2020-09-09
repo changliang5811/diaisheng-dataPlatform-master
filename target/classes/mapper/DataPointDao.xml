@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdu.diaisheng.dao.DataPointDao">
+    <insert id="insertDataPoint" parameterType="com.qdu.diaisheng.entity.DataPoint" keyProperty="pointId" keyColumn="point_id">
+        insert into data_point(data_point_id,data_model_id,data_point_name,
+         data_point_register,data_type,power,data_unit,var_desc,data_formual,
+         data_reverse_formual,data_value_type,create_time)
+        values (#{dataPointId},#{dataModel.dataModelId},#{dataPointName},
+                #{dataPointRegister},#{dataType},#{power},#{dataPointUnit},
+                #{varDesc},#{dataFormual},#{dataReverseFormual},#{dataValueType},
+                #{createTime});
+    </insert>
+
+    <resultMap id="dataPointMap" type="com.qdu.diaisheng.entity.DataPoint">
+        <id column="data_point_id" property="dataPointId"/>
+        <result column="data_point_name" property="dataPointName"/>
+        <association property="dataModel" column="data_model_id" javaType="com.qdu.diaisheng.entity.DataModel">
+            <id column="data_model_id" property="dataModelId"/>
+            <result column="data_model_name" property="dataModelName"/>
+        </association>
+    </resultMap>
+
+
+    <select id="queryDataPointListByDataModel" parameterType="Integer" resultType="com.qdu.diaisheng.entity.DataPoint">
+        select data_point_id,data_point_name from data_point where data_model_id=#{dataModelId} order by data_point_id asc
+    </select>
+    <select id="getPointNameByPointId" resultType="String">
+        select data_point_name from data_point where data_point_id=#{dataPointId}
+    </select>
+
+    <select id="getDataPointbyDevice" resultMap="dataPointMap">
+        select*from data_point p,data_model m where p.data_model_id=m.data_model_id and m.device_id=#{deviceId} order by m.data_model_id asc
+    </select>
+
+    <update id="updateDataPoint" >
+        update data_point
+        <set>
+          <if test="dataPointName !=null">
+              data_ponit_name=#{dataPointName},
+          </if>
+          <if test="dataPointRegister !=null">
+              data_point_regester=#{dataPointRegister},
+          </if>
+          <if test="dataType!=null">
+              data_type=#{dataType},
+          </if>
+          <if test="dataPointUnit!=null">
+              data_unit=#{dataPointUnit}
+          </if>
+          <if test="varDesc!=null">
+              var_desc=#{varDesc}
+          </if>
+          <if test="dataFormual!=null">
+              data_formual=#{dataFormual}
+          </if>
+          <if test="data_value_type!=null">
+              data_value_type=#{dataValueType}
+          </if>
+        </set>
+        where data_point_id=#{dataPointId}
+    </update>
+
+    <select id="getDataPointCount" resultType="Integer">
+        select count(*)from data_point where data_model_id in(select data_model_id from data_model where device_id= #{deviceId})
+    </select>
+</mapper>

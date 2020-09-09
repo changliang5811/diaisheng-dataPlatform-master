@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TokenDao">
+    <select id="checkToken" resultType="boolean" parameterType="String">
+        select 1 from token where token_value=#{token}
+    </select>
+    <update id="changeStatus">
+        update token set used_status=1;
+    </update>
+    <select id="getTokenStatus" resultType="Integer" parameterType="String">
+        select used_status from token where token_value=#{token}
+    </select>
+</mapper>

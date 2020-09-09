@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>污水智能处理系统</title>
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link href="../resources/layui/css/layui.mobile.css" rel="stylesheet">
+    <script src="../resources/layui/layui.all.js" charset="utf-8"></script>
+    <link href="../resources/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../resources/css/style.css" rel="stylesheet">
+    <link href="../resources/css/list.css" rel="stylesheet">
+
+
+
+    <link rel="stylesheet" type="text/css" href="../resources/css/index/animate.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/index/cbootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/index/cawesome-bootstrap-checkbox.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/index/select2.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/index/style.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/index/theme.css">
+    <link href="../resources/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="../resources/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="../resources/css/lib/data-table/buttons.bootstrap.min.css" rel="stylesheet" />
+    <link href="../resources/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="../resources/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../resources/css/lib/helper.css" rel="stylesheet">
+    <link href="../resources/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<!-- jquery vendor -->
+<script src="../resources/js/lib/jquery.min.js"></script>
+<script src="../resources/js/lib/jquery.nanoscroller.min.js"></script>
+<!-- bootstrap -->
+<script src="../resources/js/lib/bootstrap.min.js"></script>
+
+
+
+
+
+<div class="sidebar">
+    <div class="menu-control toggle-sidebar">
+        <a class="navbar-brand" href="#"><i class="fa fa-bar-chart"></i> 污水智能处理系统</a>
+        <i class="fa fa-bars navicon"></i>
+    </div>
+    <ul class="menu">
+        <li class="submenu">
+            <a href="/diaisheng/data/default" class="active">
+                <div>
+                    <i class="menu-icon fa fa-th-large"></i>
+                    <span class="menu-title">主页</span>
+                </div>
+            </a>
+        </li>
+        <li class="submenu">
+            <a href="/diaisheng/data/list">
+                <div>
+                    <i class="menu-icon fa fa-desktop"></i>
+                    <span class="menu-title">实时记录</span>
+                </div>
+            </a>
+        </li>
+
+
+
+        <li class="submenu">
+            <a href="/diaisheng/data/dataexport">
+                <div>
+                    <i class="menu-icon fa fa-table"></i>
+                    <span class="menu-title">历史记录</span>
+                </div>
+            </a>
+        </li>
+       <li class="submenu">
+             <a href="/diaisheng/device/location">
+                 <div>
+                     <i class="menu-icon fa fa-map-marker"></i>
+                     <span class="menu-title">设备位置</span>
+                 </div>
+             </a>
+         </li>
+
+         <li class="submenu">
+             <a href="/diaisheng/data/photo" >
+
+                 <div>
+                     <i class="menu-icon fa fa-camera-retro"></i>
+                     <span class="menu-title">实时摄像</span>
+                 </div>
+             </a>
+
+         </li>
+        <!--  <li class="submenu">
+             <a href="/diaisheng/model/list" class="dropdown-toggle">
+
+                 <div>
+                     <i class="menu-icon fa fa-magic"></i>
+                     <span class="menu-title">数据管理</span>
+                 </div>
+             </a>
+
+         </li>
+
+         <li class="submenu">
+             <a href="/diaisheng/device/list" class="dropdown-toggle">
+
+                 <div>
+                     <i class="menu-icon fa fa-slack"></i>
+                     <span class="menu-title">设备管理</span>
+                 </div>
+             </a>
+
+         </li>-->
+
+        <li class="submenu">
+            <a href="/diaisheng/varify/exit">
+
+                <div>
+                    <i class="menu-icon fa fa-power-off"></i>
+                    <span class="menu-title">退出系统</span>
+                </div>
+            </a>
+
+        </li>
+
+    </ul>
+</div>
+
+
+
+
+
+
+
+<!--<div class="right_content" style="position: relative;height: 650px; width:300px;border: solid; border-radius:10px;border-color:#cccccc; border-width:1px;margin-left:20px; margin-top: 30px; box-shadow: 5px 5px #e6d9d9;">
+    <p class="ex"><b>迪爱生</b></p>
+    <p class="ex" style=" color: #cccccc; font-size:10px;">00015203000000000001</p>
+</div>-->
+    <div id="l2"  style="position: relative;margin-left: 20px;/* margin-top:-150px;*/border: solid; border-radius:10px; border-color:  #ccccff; border-width: 1px; box-shadow: 5px 5px #e6d9d9; ">
+    <section id="dataList" style="height: 40px">
+        <p style="margin: 0px;margin-left: 10px; padding-top: 10px; ">
+            <select name="device" lay-verify="" id="device">
+                <option value="">请选择一个设备</option>
+            </select>
+            <button type="button" class="btn btn-info" id="collectionTop" style="margin-left: 75%" onclick="updateList()">主动采集</button>
+        </p>
+        <table class="layui-table" id="listInfo" lay-filter="demoEvent"></table>
+    </section>
+</div>
+<!--<script type="text/html" id="barDemo">
+    <div id="caozuo">
+        <button type="button" class="layui-btn" id="history" lay-event="history">历史记录</button>
+        <button type="button" class="layui-btn" id="collection" lay-event="collection">主动采集</button>
+        <button type="button" class="layui-btn" id="task" lay-event="task">定时任务</button>
+    </div>
+</script>-->
+
+<script type="text/javascript">
+
+
+
+
+    function dataInit(){
+        $.ajax({
+            url:'/diaisheng/deviceadmin/getdevice',
+            type:'get',
+            success:function(res){
+                $.each(res.device, function (index,item) {
+                    var deviceName = item.deviceName;
+                    var deviceId = item.deviceId;
+                    //构造动态option
+                    $('#device').append("<option value='"+deviceId+"'>"+deviceName+"</option>")
+                });
+            }
+        });
+    }
+
+
+
+    function updateList(){
+        layui.use(['table'], function() {
+            var table = layui.table;
+            table.render({
+                elem: '#listInfo'
+                , url: "/diaisheng/valueadmin/getdata?deviceId="+$('#device option:selected') .val()
+                , cols: [[
+                    {type: 'numbers'}
+                    , {field: 'dataPoint', title: 'ID', width: 120,sort:false,align: 'center',templet:/* '<div>{{d.dataPoint.dataPointId}}</div>'*/
+                            function(d){
+                                if(d.red==1)
+                                    return '<span style="color: red;">'+ d.dataPoint.dataPointId +'</span>'
+                                else
+                                    return '<span>'+d.dataPoint.dataPointId+'</span>'
+                            }
+                    }
+                    , {field: 'dataPoint', title: '数据点', width: 260,align: 'center',templet: /*'<div>{{d.dataPoint.dataPointName}}</div>'*/
+                         function(d){
+                            if(d.red==1)
+                                return '<span style="color: red;">'+ d.dataPoint.dataPointName +'</span>'
+                            else
+                                return '<span>'+d.dataPoint.dataPointName+'</span>'
+                        }
+                    }
+                    , {field: 'value', title: '当前值', width: 217,sort:true,align: 'center'
+                            ,templet: function(d){
+                                if(d.red==1)
+                                    return '<span style="color: red;">'+ d.value +'</span>'
+                                else
+                                    return '<span>'+d.value+'</span>'
+                     }
+                        }
+                    , {field: 'dataPoint', title: '从机名称', width: 300,align: 'center',templet: /*'<div>{{d.dataPoint.dataModel.dataModelName}}</div>'*/
+                            function(d){
+                                if(d.red==1)
+                                    return '<span style="color: red;">'+d.dataPoint.dataModel.dataModelName+'</span>'
+                                else
+                                    return '<span>'+d.dataPoint.dataModel.dataModelName+'</span>'
+                            }
+                    }
+                    , {field: 'createTime', title: '更新时间', width: 300,sort:true,align: 'center',templet:
+                            function(d){
+                                if(d.red==1)
+                                    return '<span style="color: red;">'+ d.createTime +'</span>'
+                                else
+                                    return '<span>'+d.createTime+'</span>'
+                            }
+                }
+                   /* , {
+                        field: 'modify',
+                        title: '操作',
+                        width: 270,
+                        unresize:true,
+                        align: 'center',
+                        toolbar: '#barDemo',
+                        event: "modifyAdmin",
+                        style: "cursor:pointer"
+                    }*/
+                ]]
+            });
+            //监听单元格事件
+            table.on('tool(demoEvent)', function(obj){
+                var data = obj.data;
+                var tr = obj.tr; //获得当前行 tr 的DOM对象
+                if(obj.event==="history"){
+                    window.location.href="/diaisheng/data/dataexport?data="
+                        +data.dataPoint.dataPointId+"&dataName="+encodeURI(data.dataPoint.dataPointName)
+                        +"&congji="+encodeURI(data.dataPoint.dataModel.dataModelName);
+                }else if(obj.event==="collection"){
+                    var dataPointId = data.dataPoint.dataPointId;
+                    $.ajax({
+                        url:"/diaisheng/valueadmin/getdatabypoint",
+                        type:"post",
+                        data:{"x":dataPointId},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.dataValue.color==1){
+                                layer.open({
+                                type: 1,
+                                title:"最新信息",
+                                area: ['250px', '220px'],
+                                fixed: false, //不固定
+                                maxmin: false,
+                                content: "<p align='center'>ID："+data.dataValue.dataPoint.dataPointId+"</p>"+
+                                         "<p align='center'>从机名称："+data.dataValue.dataPoint.dataModel.dataModelName+"</p>"+
+                                         "<p align='center'>更新时间："+data.dataValue.createTime+"</p>"+
+                                         "<p align='center'>数据点："+data.dataValue.dataPoint.dataPointName+"</p>"+
+                                         "<p align='center' style='color:red;'>当前值："+data.dataValue.value+"</p>"
+
+                            });
+                            }else{
+                                layer.open({
+                                type: 1,
+                                title:"最新信息",
+                                area: ['250px', '220px'],
+                                fixed: false, //不固定
+                                maxmin: false,
+                                content: "<p align='center'>ID："+data.dataValue.dataPoint.dataPointId+"</p>"+
+                                         "<p align='center'>从机名称："+data.dataValue.dataPoint.dataModel.dataModelName+"</p>"+
+                                         "<p align='center'>更新时间："+data.dataValue.createTime+"</p>"+
+                                         "<p align='center'>数据点："+data.dataValue.dataPoint.dataPointName+"</p>"+
+                                         "<p align='center'>当前值："+data.dataValue.value+"</p>"
+
+                            });
+                                
+                            }
+                            
+                        },
+                        error: function (errorMsg) {
+                            //请求失败时执行该函数
+                            alert("图表请求数据失败!");
+                            table.render();
+                        }
+                    })
+
+                }else if(obj.event==="task"){
+
+                }
+            });
+        });
+        setTimeout('updateList()',60000);
+    }
+    $(function(){
+       // UpdateData();
+        dataInit();
+        $("#device").change(function () {
+            updateList();
+        });
+    });
+</script>
+
+</body>
+
+</html>
+

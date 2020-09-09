@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TokenDao">
+    <select id="checkToken" resultType="boolean" parameterType="String">
+        select count(*) from token where token_value=#{token}
+    </select>
+    <update id="changeStatus" parameterType="Integer">
+        update token set used_status=1;
+    </update>
+    <select id="getTokenStatus" resultType="Integer" parameterType="String">
+        select used_status from token where token_value=#{token}
+    </select>
+    <select id="getDeviceIdByToken" resultType="String" parameterType="String">
+        select device_id from token where token_value=#{token}
+    </select>
+    <insert id="addToken" parameterType="com.qdu.diaisheng.entity.Token" keyColumn="token_id" keyProperty="tokenId" useGeneratedKeys="true">
+        insert into token(token_value,create_time,used_status,name,device_id)
+        values(#{tokenValue},#{createTime},#{usedStatus},#{tokenName},#{deviceId})
+    </insert>
+</mapper>
