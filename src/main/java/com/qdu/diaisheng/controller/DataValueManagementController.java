@@ -104,6 +104,46 @@ public class DataValueManagementController {
     }
 
     /**
+    * description:
+    * @author changliang
+    * @Date 2020/10/19 18:52
+    * @methodName getKeyData
+    * @return PageInfo
+    * @param request
+    */
+    @RequestMapping(value = "/getKeyData")
+    @ResponseBody
+    public PageInfo getKeyData(HttpServletRequest request){
+        //Integer page, Integer limit
+        PageInfo pageInfo = new PageInfo();
+        List<DataValue> list = new ArrayList<>();
+        String deviceId=request.getParameter("deviceId");
+        if(deviceId!=null){
+            try{
+                DataValueExecution dve=dataValueService.getnowKeyData(deviceId);
+                list = dve.getDataValueList();
+                if(dve.getState()==DataValueEnum.SUCCESS.getState()){
+                    pageInfo.setData(dve.getDataValueList());
+                    pageInfo.setCode(0);
+                    pageInfo.setMsg("查询数据点信息成功");
+                }else{
+                    pageInfo.setMsg("查询数据点信息失败");
+                }
+            }catch (Exception e){
+                logger.error("查询数据点信息失败！",e);
+                pageInfo.setMsg("查询数据点信息失败");
+            }
+        }else {
+            logger.error("查询数据点信息失败！");
+            pageInfo.setMsg("查询数据点信息失败");
+
+        }
+        return pageInfo;
+
+    }
+
+
+    /**
      * @author wangxi
      * @Description
      * @date  2017/7/20

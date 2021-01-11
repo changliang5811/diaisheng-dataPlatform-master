@@ -17,6 +17,9 @@ public interface DataValueService {
     @Transactional
     DataValueExecution getnowdate(String deviceId) throws ParseException;
 
+    @Transactional
+    DataValueExecution getnowKeyData(String deviceId) throws ParseException;
+
     List<DataValue> getDataValueListByDate(String date);
 
     DataValueExecution getDateValueListAtPointIdBetweenDate(String date1,String date2,List<String>pointIds);

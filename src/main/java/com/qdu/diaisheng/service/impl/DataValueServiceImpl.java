@@ -10,10 +10,7 @@ import com.qdu.diaisheng.entity.DataValue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.qdu.diaisheng.service.DataValueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +98,85 @@ public class DataValueServiceImpl implements DataValueService {
             for(DataValue dataValue:dataValueList){
                 String s = dataValue.getCreateTime();
                 SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date nowTime=new Date();
+                String ss = s.substring(0,19);
+                dataValue.setCreateTime(ss);
+                Date dataDate=sdf.parse(ss);
+                long end  = nowTime.getTime();
+                long diff=end - dataDate.getTime();
+                float day= diff / (24 * 60 * 60 * 1000);
+                if(day>=1){
+                    dataValue.setRed(1);
+                }else{
+                    dataValue.setRed(0);
+                }
+            }
+            dve.setDataValueList(dataValueList);
+            dve.setState(DataValueEnum.SUCCESS.getState());
+        }else{
+            dve.setState(DataValueEnum.EMPTY.getState());
+        }
+        return dve;
+    }
+/**
+* description: 获取当前deviceId的关键数据
+* @author changliang
+* @Date 2020/10/20 00:37
+* @methodName getnowKeydata
+* @return DataValueExecution
+* @param deviceId
+*/
+    @Override
+    public DataValueExecution getnowKeyData(String deviceId) throws ParseException {
+        List<DataValue>dataValueList=new ArrayList<>();
+        DataValueExecution dve=new DataValueExecution();
+
+        //List<DataPoint> dataPointList=dataPointDao.getDataPointbyDevice(deviceId);
+
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<String> ds = new ArrayList<>();
+        String[] data_codes = new String[]{"32280","30949","51284","32269","32270","90004","63007","73007","83007"};
+        /*if(dataPointList!=null){
+            for(DataPoint dataPoint:dataPointList){
+                String pointId = dataPoint.getDataPointId();
+                if (Arrays.asList(data_codes).contains(pointId)){
+                    ds.add(dataPoint.getDataPointId());
+                }
+            }*/
+            ds = Arrays.asList(data_codes);
+            dataValueList=dataValueDao.getnowdate(ds);
+            //处理24小时出水量等数据
+            for (int i = 0;i<3;i++){
+                DataValue dataValue_item = dataValueList.get(i);
+                String data_code_item = ds.get(i);
+                Float now_data_value = dataValue_item.getValue();
+                String date_sql_new = dataValue_item.getCreateTime();
+                DataValue dataValueBefore = null;
+                int minutes = -5;
+                String date_end = null;
+                String date_start = null;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(sdf.parse(date_sql_new));
+                calendar.add(Calendar.DAY_OF_MONTH,-1);
+                while (dataValueBefore == null){
+                    //数据库最新时间-24小时
+                    date_end = sdf.format(calendar.getTime());
+                    calendar.add(Calendar.MINUTE,minutes);
+                    date_start = sdf.format(calendar.getTime());
+                    dataValueBefore = dataValueDao.getBeforeKeyData(date_start,date_end,data_code_item);
+                    minutes -= 5;
+                }
+                dataValue_item.getDataPoint().setDataPointName("24小时"+dataValue_item.getDataPoint().getDataPointName());
+                dataValue_item.setValue(now_data_value - dataValueBefore.getValue());
+
+            }
+        //}
+        /*else{
+            dve.setState(DataValueEnum.EMPTY.getState());
+        }*/
+        if(dataValueList != null){
+            for(DataValue dataValue:dataValueList){
+                String s = dataValue.getCreateTime();
                 Date nowTime=new Date();
                 String ss = s.substring(0,19);
                 dataValue.setCreateTime(ss);

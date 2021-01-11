@@ -31,6 +31,14 @@
         </foreach>
 
     </select>
+
+    <select id="getBeforeKeyData" resultMap="dataValueMap">
+        SELECT data_value_id,val,data_point_id,create_time
+         FROM data_value
+        WHERE create_time BETWEEN DATE_FORMAT(#{date_start}, '%Y-%m-%d %H:%i:%S') AND DATE_FORMAT(#{date_end}, '%Y-%m-%d %H:%i:%S')
+        AND data_point_id = #{dataPointId}
+        ORDER BY create_time DESC LIMIT 1;
+    </select>
     <select id="findById" parameterType="String" resultMap="dataPointMap">
         select data_point_id,data_point_name,p.data_model_id as data_model_id,data_model_name
         from data_point p,data_model m

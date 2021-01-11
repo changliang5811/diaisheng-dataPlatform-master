@@ -23,4 +23,7 @@ public interface DataVauleDao {
 
     DataValue getDataByPointId(String dataPointId);//通过数据点查询最新的数据
 
+    //获取24小时之前的数据点数据
+    DataValue getBeforeKeyData(@Param("date_start") String date_start,@Param("date_end") String date_end,@Param("dataPointId") String dataPointId);
+
 }
